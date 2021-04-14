@@ -29,7 +29,7 @@ def is_IOF_course_data_xml_file(data):
 
 def parse_course_csv(data):
     cps = dict()
-    csvreader = csv.reader(StringIO(data))
+    csvreader = csv.reader(StringIO(data), delimiter=';')
     for row in csvreader:
         code = row[0]
         if code == 'rotate_angle':
@@ -37,8 +37,12 @@ def parse_course_csv(data):
             continue
         if code.isdigit():
             code = int(code)
-        x = int(float(row[1]))
-        y = int(float(row[2]))
+        try:
+            x = int(float(row[1]))
+            y = int(float(row[2]))
+        except:
+            x = 0
+            y = 0
         cps[code] = [x, y]
     return cps
     

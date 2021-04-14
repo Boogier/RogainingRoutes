@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!c:/Python39/python.exe
 """
    Copyright 2017-2020 Semyon Yakimov
    This file is part of RogainingRoutes.

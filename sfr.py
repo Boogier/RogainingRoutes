@@ -73,6 +73,8 @@ def parse_member_splits(tr_element):
                     match = re.match('\d+', text)
                     if match:
                         member.team_bib = int(match.group(0))
+            elif text == '0:00':
+                continue
             elif text is not None:
                 cp = Checkpoint()
                 match = re.match('(\d+:\d+)\[(\d+)\]', text)
@@ -84,10 +86,11 @@ def parse_member_splits(tr_element):
                     member.sum += cp.points
                     match = re.search('\d+:\d+$', tail)
                     if match:
+                        current_time = cp_time
                         cp.split = str_to_time(match.group(0))
                     else:
                         cp.split = cp_time
-                    current_time += cp.split
+                        current_time += cp.split
                     cp.time = current_time
 
                     member.route.append(cp)
