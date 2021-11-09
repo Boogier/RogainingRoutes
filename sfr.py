@@ -21,7 +21,7 @@ from lxml import etree
 
 sfr_spit_field_name = {
     'Номер': 'bib',
-    'Фамилия': 'last_name',
+    'Фамилия,': 'last_name',
     'Имя': 'first_name',
     'Г.р.': 'year_of_birth',
     'Команда': 'team_name',
@@ -43,7 +43,8 @@ def str_to_time(s):
         s = int(match.group(3))
         return timedelta(hours=h, minutes=m, seconds=s)
     else:
-        raise Exception(s)
+        #raise Exception(s)
+        return timedelta(hours=25, minutes=0, seconds=0)
 
 def extract_event_title(title):
     return re.sub('\s+Протокол.+$', '', title)
@@ -100,8 +101,8 @@ def parse_member_splits(tr_element):
         return
 
     member.time = str_to_time(member.time)
-    member.first_name = member.first_name.capitalize()
-    member.last_name = member.last_name.capitalize()
+    #member.first_name = member.first_name.capitalize()
+    #member.last_name = member.last_name.capitalize()
 
     start = Startpoint()
     member.route.insert(0, start)
@@ -127,6 +128,7 @@ def parse_SFR_splits_table(table_element, group):
             member = parse_member_splits(e)
             if member:
                 bib = member.team_bib
+                print('bib=', bib)
                 if teams.get(bib) is None:
                     teams[bib] = Team()
                 teams[bib].members.append(member)
@@ -174,6 +176,7 @@ def parse_SFR_splits_html(splits_filename):
             if match:
                 duration = match.group(0)
         elif e.tag == 'table':
-            teams[group] = parse_SFR_splits_table(e, group)
+            ee = e.find('tbody')
+            teams[group] = parse_SFR_splits_table(ee, group)
     return teams, event_title
 

@@ -20,11 +20,14 @@ class Member:
     def __init__(self):
         self.route = []
         self.sum = 0
+        self.first_name = ''
+        self.last_name = ''
 
     def __setitem__(self, key, value):
         setattr(self, key, value)
 
     def get_full_name(self):
+        #return self.full_name
         return self.first_name + ' ' + self.last_name
 
     def __str__(self):

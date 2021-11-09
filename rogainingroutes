@@ -125,6 +125,13 @@ def make_start_triangle(start, end):
     )
     return [_round(rotate(start, (p[0] + start[0], p[1] + start[1]), ang)) for p in polyline]
 
+
+def formatTimeDelta(time):
+    if time:
+        return int(time.total_seconds())
+
+    return -1
+
 def print_routes(teams, event_title, cp_coords, leg_results, leg_results_both_dirs):
     print ('===============================')
     printable = set(" 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%()*+,-./:;=?@[]^_`|~АаБбВвГгДдЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщЪъЫыЬьЭэЮюЯя")
@@ -145,7 +152,7 @@ def print_routes(teams, event_title, cp_coords, leg_results, leg_results_both_di
             routeStr = []
             for i in range(len(team.route)):
                 cp = team.route[i]
-                routeStr.append ('{' + ('"id":"{}", "value":"{}", "time":"{}"'.format(cp.id, cp.points, cp.time)) + '}')
+                routeStr.append ('{' + ('"id":"{}", "value":"{}", "time":"{}"'.format(cp.id, cp.points, formatTimeDelta(cp.time))) + '}')
             teamStr.append ('{"title":"' + title + '","members":"' + members + '", "number":"' + str(team.bib) + '", "group":"' + group + '", "route":[' + ','.join(routeStr) + ']}')
     f.write(','.join(teamStr))
     f.write (']')
@@ -299,7 +306,9 @@ def make_leg_results(teams):
     all_legs = {}
     all_legs_both_dirs = {}
     for group in teams:
+        print('group: ', group)
         for t in teams[group]:
+            print('team: ', t)
             prevCp = None
             for cp in t.route:
                 if prevCp is not None and cp.id is not None:
@@ -398,8 +407,15 @@ if __name__ == '__main__':
     shutil.copy('templates/style.css', args.output_dir)
 
     meters_in_pixel = args.map_scale*0.0254/args.map_dpi
-    print('Meters in pixel:', meters_in_pixel)
+
+    print('Event title:', event_title)
+    print('Teams:', teams)
+
     leg_results, leg_results_both_dirs = make_leg_results(teams)
+    print('leg_results: ', leg_results)
+    print('leg_results_both_dirs: ', leg_results_both_dirs)
+
+
     print_routes(teams, event_title, cp_coords, leg_results, leg_results_both_dirs)
     #make_result_html(teams, event_title, cp_coords, meters_in_pixel, output_map_filename, args.output_dir)
 
